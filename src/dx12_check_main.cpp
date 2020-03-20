@@ -34,6 +34,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nC
 				std::wcout << " doesn't support DX12 ";
 			}
 
+			std::wcout << std::endl;
+
 			adapter_index++;
 		}
 	}
