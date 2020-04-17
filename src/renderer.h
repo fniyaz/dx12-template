@@ -15,6 +15,8 @@ public:
 		fence_value = 0;
 		fence_event = nullptr;
 
+		mvp = XMMatrixIdentity();
+
 		aspect_ratio = static_cast<float>(width) / static_cast<float>(height);
 	};
 	virtual ~Renderer() {};
@@ -24,14 +26,19 @@ public:
 	virtual void OnRender();
 	virtual void OnDestroy();
 
-	virtual void OnKeyDown(UINT8 key) { };
-	virtual void OnKeyUp(UINT8 key) {  };
+	virtual void OnKeyDown(UINT8 key);
+	virtual void OnKeyUp(UINT8 key);
 
 	UINT GetWidth() const { return width; }
 	UINT GetHeight() const { return height; }
 	const WCHAR* GetTitle() const { return title.c_str(); }
 
 protected:
+	float dx = 0, dy = 0, dz = 0;
+	float x = 0, y = 0, z = 0;
+	float ud = 0, lr = 0;
+	float dud = 0, dlr = 0;
+
 	UINT width;
 	UINT height;
 	std::wstring title;
@@ -43,6 +50,7 @@ protected:
 	ComPtr<ID3D12CommandQueue> command_queue;
 	ComPtr<IDXGISwapChain3> swap_chain;
 	ComPtr<ID3D12DescriptorHeap> rtv_heap;
+	ComPtr<ID3D12DescriptorHeap> cbv_heap;
 	UINT rtv_descriptor_size;
 	ComPtr<ID3D12Resource> render_targets[frame_number];
 	ComPtr<ID3D12CommandAllocator> command_allocator;
@@ -56,12 +64,17 @@ protected:
 	// Resources
 	ComPtr<ID3D12Resource> vertex_buffer;
 	D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view;
+	std::vector<ColorVertex> vertices;
 
 	// Synchronization objects.
 	UINT frame_index;
 	HANDLE fence_event;
 	ComPtr<ID3D12Fence> fence;
 	UINT64 fence_value;
+
+	XMMATRIX mvp;
+	ComPtr<ID3D12Resource> constant_buffer;
+	UINT8* const_data_begin;
 
 	float aspect_ratio;
 
