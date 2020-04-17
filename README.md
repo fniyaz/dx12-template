@@ -2,6 +2,12 @@
 
 This repo contains a template for Basics of DirectX 12 labs
 
+## Contols
+
+WASD - to move around
+Space / Shift - to fly up / down
+Arrow keys - to look around
+
 ## Pre requirements
 
 - [Premake5](https://premake.github.io/download.html#v5)
