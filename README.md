@@ -2,11 +2,11 @@
 
 This repo contains a template for Basics of DirectX 12 labs
 
-## Contols
+## Controls
 
-WASD - to move around
-Space / Shift - to fly up / down
-Arrow keys - to look around
+- WASD - to move around
+- Space / Shift - to fly up / down
+- Arrow keys - to look around
 
 ## Pre requirements
 
