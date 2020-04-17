@@ -274,7 +274,8 @@ void Renderer::LoadAssets()
 
 	D3D12_INPUT_ELEMENT_DESC input_element_desc[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 3 * 4, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 3 * 4, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 3*4 + 4*4, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
 	};
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pso_desc = {};
@@ -349,7 +350,14 @@ void Renderer::LoadAssets()
 				tinyobj::real_t vy = attrib.vertices[3 * idx.vertex_index + 1];
 				tinyobj::real_t vz = attrib.vertices[3 * idx.vertex_index + 2];
 				auto color = materials[material_ids].diffuse;
-				
+
+				XMFLOAT3 norm = { 0, 0, 0 };
+
+				if (f > 0) {
+					auto mnorm = XMVector3Cross(XMVECTOR({ vx, vy, vz }), XMLoadFloat3(&vertices[vertices.size() - 1].position));
+					norm = XMFLOAT3{ XMVectorGetX (mnorm), XMVectorGetY (mnorm), XMVectorGetZ (mnorm)};
+					vertices[vertices.size() - 1].norm = norm;
+				}
 				vertices.push_back(ColorVertex{ { vx, vy, vz }, {color[0], color[1], color[2], 1.f} });
 			}
 			index_offset += fv;			
