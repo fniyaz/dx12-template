@@ -11,14 +11,23 @@ void Renderer::OnInit()
 
 void Renderer::OnUpdate()
 {
-	ud += dud;
+	ud -= dud;
+	auto almost_half_pi = XM_PI / 2 * 0.99999;
+	if (ud > almost_half_pi)
+		ud = almost_half_pi;
+	if (ud < -almost_half_pi)
+		ud = -almost_half_pi;
+
 	lr += dlr;
 
 	XMVECTOR fwd { 0, 0, 1 };
 	fwd = XMVector4Transform(fwd, XMMatrixRotationRollPitchYaw(ud, lr, 0));
 
 	auto fz = fwd * dz + XMVector3Cross(fwd, XMVECTOR{ 0.f, 1.f, 0.f }) * dx;
-
+	auto size = sqrtf(fwd.m128_f32[0] * fwd.m128_f32[0] + fwd.m128_f32[2] * fwd.m128_f32[2]);
+	if (size > 0)
+		fz /= size;
+	
 	x += fz.m128_f32[0];
 	y += dy;
 	z += fz.m128_f32[2];
@@ -275,8 +284,8 @@ void Renderer::LoadAssets()
 	pso_desc.PS = CD3DX12_SHADER_BYTECODE(frag_shader.Get());
 	pso_desc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	pso_desc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	pso_desc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME; //todo remove
-	pso_desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE; //todo remove
+	//pso_desc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME; //todo remove
+	//pso_desc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE; //todo remove
 	pso_desc.RasterizerState.DepthClipEnable = false; //todo remove
 	pso_desc.DepthStencilState.DepthEnable = FALSE;
 	pso_desc.DepthStencilState.StencilEnable = FALSE;
