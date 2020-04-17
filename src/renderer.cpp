@@ -352,14 +352,19 @@ void Renderer::LoadAssets()
 				auto color = materials[material_ids].diffuse;
 
 				XMFLOAT3 norm = { 0, 0, 0 };
-
-				if (f > 0) {
-					auto mnorm = XMVector3Cross(XMVECTOR({ vx, vy, vz }), XMLoadFloat3(&vertices[vertices.size() - 1].position));
-					norm = XMFLOAT3{ XMVectorGetX (mnorm), XMVectorGetY (mnorm), XMVectorGetZ (mnorm)};
-					vertices[vertices.size() - 1].norm = norm;
-				}
-				vertices.push_back(ColorVertex{ { vx, vy, vz }, {color[0], color[1], color[2], 1.f} });
+				vertices.push_back(ColorVertex{ { vx, vy, vz }, {color[0], color[1], color[2], 1.f}, norm });
 			}
+
+			auto v1 = XMLoadFloat3(&vertices[vertices.size() - 1].position);
+			auto v2 = XMLoadFloat3(&vertices[vertices.size() - 2].position);
+			auto v3 = XMLoadFloat3(&vertices[vertices.size() - 3].position);
+
+			auto mnorm = XMVector3Cross(v1 - v2, v3 - v2);
+			XMFLOAT3 norm = XMFLOAT3{ XMVectorGetX(mnorm), XMVectorGetY(mnorm), XMVectorGetZ(mnorm) };
+			
+			for (size_t v = 0; v < fv; v++)
+				vertices[vertices.size() - 1 - v].norm = norm;
+
 			index_offset += fv;			
 		}
 	}
